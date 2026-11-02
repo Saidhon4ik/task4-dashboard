@@ -11,6 +11,11 @@
 
   <p>Books in database: <strong>{{ total }}</strong></p>
 
+  <h2>Books by genre</h2>
+  {% for genre, count in counts %}
+    <p>{{ genre or 'Uncategorized' }}: {{ count }}</p>
+  {% endfor %}
+
   <h2>Books</h2>
   <p>Showing up to 25 books.</p>
   <table border="1" cellpadding="6">

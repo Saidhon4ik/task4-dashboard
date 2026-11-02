@@ -20,8 +20,11 @@ def query(sql, values=()):
 @app.get("/")
 def dashboard():
     total = query("SELECT COUNT(*) FROM books")[0][0]
+    counts = query(
+        "SELECT genre, COUNT(*) FROM books GROUP BY genre ORDER BY COUNT(*) DESC LIMIT 10"
+    )
     books = query("SELECT title, author, genre, year FROM books ORDER BY title LIMIT 25")
-    return render_template("index.html", total=total, books=books)
+    return render_template("index.html", total=total, counts=counts, books=books)
 
 
 if __name__ == "__main__":
