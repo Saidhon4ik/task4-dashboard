@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Books dashboard</title>
+</head>
+<body>
+  <h1>Books dashboard</h1>
+  <p>Explore the book collection.</p>
+
+  <p>Books in database: <strong>{{ total }}</strong></p>
+
+  <h2>Books</h2>
+  <p>Showing up to 25 books.</p>
+  <table border="1" cellpadding="6">
+    <tr><th>Title</th><th>Author</th><th>Genre</th><th>Year</th></tr>
+    {% for book in books %}
+      <tr>{% for value in book %}<td>{{ value or '—' }}</td>{% endfor %}</tr>
+    {% else %}
+      <tr><td colspan="4">No books found.</td></tr>
+    {% endfor %}
+  </table>
+</body>
+</html>

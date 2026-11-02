@@ -2,7 +2,7 @@ import os
 
 import psycopg
 from dotenv import load_dotenv
-from flask import Flask
+from flask import Flask, render_template
 
 load_dotenv()
 app = Flask(__name__)
@@ -20,7 +20,8 @@ def query(sql, values=()):
 @app.get("/")
 def dashboard():
     total = query("SELECT COUNT(*) FROM books")[0][0]
-    return f"<h1>Books dashboard</h1><p>Books in database: {total}</p>"
+    books = query("SELECT title, author, genre, year FROM books ORDER BY title LIMIT 25")
+    return render_template("index.html", total=total, books=books)
 
 
 if __name__ == "__main__":
