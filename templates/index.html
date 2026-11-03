@@ -7,9 +7,9 @@
 </head>
 <body>
   <h1>Books dashboard</h1>
-  <p>Explore the book collection.</p>
+  <p>Explore and filter the book collection.</p>
 
-  <p>Books in database: <strong>{{ total }}</strong></p>
+  <p>Books matching filter: <strong>{{ total }}</strong></p>
 
   <h2>Books by genre</h2>
   {% for genre, count in counts %}
@@ -17,14 +17,18 @@
   {% endfor %}
 
   <h2>Books</h2>
+  <form method="get">
+    <select name="genre">
+      <option value="">All genres</option>
+      {% for item in genres %}
+        <option value="{{ item[0] }}" {% if selected_genre == item[0] %}selected{% endif %}>{{ item[0] }}</option>
+      {% endfor %}
+    </select>
+    <button>Filter</button>
+    <a href="/">Clear</a>
+  </form>
   <p>Showing up to 25 books.</p>
   <table border="1" cellpadding="6">
     <tr><th>Title</th><th>Author</th><th>Genre</th><th>Year</th></tr>
     {% for book in books %}
-      <tr>{% for value in book %}<td>{{ value or '—' }}</td>{% endfor %}</tr>
-    {% else %}
-      <tr><td colspan="4">No books found.</td></tr>
-    {% endfor %}
-  </table>
-</body>
-</html>
+      <tr>{% for value in book

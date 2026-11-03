@@ -2,7 +2,7 @@ import os
 
 import psycopg
 from dotenv import load_dotenv
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 
 load_dotenv()
 app = Flask(__name__)
@@ -19,12 +19,29 @@ def query(sql, values=()):
 
 @app.get("/")
 def dashboard():
-    total = query("SELECT COUNT(*) FROM books")[0][0]
+    genre = request.args.get("genre", "")
+
+    where = ""
+    values = []
+    if genre:
+        where = " WHERE genre = %s"
+        values.append(genre)
+
+    total = query(f"SELECT COUNT(*) FROM books{where}", values)[0][0]
+    genres = query("SELECT DISTINCT genre FROM books WHERE genre IS NOT NULL ORDER BY genre")
     counts = query(
-        "SELECT genre, COUNT(*) FROM books GROUP BY genre ORDER BY COUNT(*) DESC LIMIT 10"
+        f"SELECT genre, COUNT(*) FROM books{where} GROUP BY genre ORDER BY COUNT(*) DESC LIMIT 10",
+        values,
     )
-    books = query("SELECT title, author, genre, year FROM books ORDER BY title LIMIT 25")
-    return render_template("index.html", total=total, counts=counts, books=books)
+    books = query(
+        f"SELECT title, author, genre, year FROM books{where} ORDER BY title LIMIT 25",
+        values,
+    )
+
+    return render_template(
+        "index.html", total=total, genres=genres, counts=counts, books=books,
+        selected_genre=genre,
+    )
 
 
 if __name__ == "__main__":
