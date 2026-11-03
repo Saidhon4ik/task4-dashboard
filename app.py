@@ -20,12 +20,18 @@ def query(sql, values=()):
 @app.get("/")
 def dashboard():
     genre = request.args.get("genre", "")
+    search = request.args.get("search", "")
 
-    where = ""
+    filters = []
     values = []
     if genre:
-        where = " WHERE genre = %s"
+        filters.append("genre = %s")
         values.append(genre)
+    if search:
+        filters.append("(title ILIKE %s OR author ILIKE %s)")
+        values.extend([f"%{search}%", f"%{search}%"])
+
+    where = " WHERE " + " AND ".join(filters) if filters else ""
 
     total = query(f"SELECT COUNT(*) FROM books{where}", values)[0][0]
     genres = query("SELECT DISTINCT genre FROM books WHERE genre IS NOT NULL ORDER BY genre")
@@ -40,7 +46,7 @@ def dashboard():
 
     return render_template(
         "index.html", total=total, genres=genres, counts=counts, books=books,
-        selected_genre=genre,
+        selected_genre=genre, search=search,
     )
 
 
