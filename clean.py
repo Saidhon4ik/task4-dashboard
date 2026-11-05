@@ -15,6 +15,12 @@ def get_amount(text):
         return float(groups[0])
     return float(groups[0] + "." + groups[1])
 
+def add_price_columns(orders):
+    """Add 'currency' and 'amount' columns parsed from 'unit_price'."""
+    orders = orders.copy()
+    orders["currency"] = orders["unit_price"].map(get_currency)
+    orders["amount"] = orders["unit_price"].map(get_amount)
+    return orders
 
 if __name__ == "__main__":
     tests = ["$20¢25", "29€50¢", "USD 15.", "52.99USD", "EUR37.50", "46$99¢", "€ 32.00", "36 EUR"]
